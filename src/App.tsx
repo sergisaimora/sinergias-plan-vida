@@ -374,7 +374,12 @@ const astroRelations = astroRelationsData.reduce((acc, curr) => {
 }, {});
 
 
-function calcularCompatibilidad(A, B, opts = {}) {
+// Accept an options object with an optional `phase` property. Without a type
+// annotation TypeScript infers `opts` to be `{}` and accessing unknown
+// properties causes compilation errors (TS2339). Use `any` to allow the
+// `phase` property to be read without strict typing. If you would like
+// stronger typing you can define an interface with `phase?: string`.
+function calcularCompatibilidad(A, B, opts: any = {}) {
   const phase = opts.phase === 'first' ? 'first' : 'second';
   const CONFIG = {
     anchors: ['M', 'E'],
