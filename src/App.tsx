@@ -922,7 +922,7 @@ function App() {
     useEffect(() => {
         const loadPdfMake = async () => {
             try {
-                if (window.pdfMake) {
+                    if ((window as any).pdfMake) {
                     setIsPdfMakeReady(true);
                     return;
                 }
