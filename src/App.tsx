@@ -244,7 +244,39 @@ const calculationEngine = {
         if (left === 22) right = 4;
         return `${left}-${right}`;
     },
-    getPhoneticValues: function(name) { const preNormalized = name.replace(/ñ/gi, (match) => match === 'ñ' ? '__LOWER_ENYE__' : '__UPPER_ENYE__'); const normalized = preNormalized.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); const restored = normalized.replace(/__LOWER_ENYE__/g, 'ñ').replace(/__UPPER_ENYE__/g, 'Ñ'); const words = restored.toUpperCase().split(/\s+/).filter(w => w.length > 0); const allVals = []; words.forEach((word) => { let i = 0; while (i < word.length) { let foundCombo = false; if (i + 1 < word.length) { const twoLetterCombo = word.substring(i, i + 2); if (this.conversionTable[twoLetterCombo]) { allVals.push(this.conversionTable[twoLetterCombo]); i += 2; foundCombo = true; } } if (!foundCombo) { if (this.conversionTable[word[i]]) { allVals.push(this.conversionTable[word[i]]); } i++; } } }); return allVals; },
+    getPhoneticValues: function(name: string) {
+        // Normalize the input name, preserving ñ/Ñ markers. Without type annotations
+        // on `allVals`, TypeScript infers an empty array's type as `never[]`, which
+        // disallows pushing numbers. Explicitly declare `allVals` as number[] to
+        // avoid TS2345 errors when pushing values.
+        const preNormalized = name.replace(/ñ/gi, (match) => match === 'ñ' ? '__LOWER_ENYE__' : '__UPPER_ENYE__');
+        const normalized = preNormalized.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const restored = normalized.replace(/__LOWER_ENYE__/g, 'ñ').replace(/__UPPER_ENYE__/g, 'Ñ');
+        const words = restored.toUpperCase().split(/\s+/).filter(w => w.length > 0);
+        const allVals: number[] = [];
+        words.forEach((word: string) => {
+            let i = 0;
+            while (i < word.length) {
+                let foundCombo = false;
+                if (i + 1 < word.length) {
+                    const twoLetterCombo = word.substring(i, i + 2);
+                    if (this.conversionTable[twoLetterCombo]) {
+                        allVals.push(this.conversionTable[twoLetterCombo]);
+                        i += 2;
+                        foundCombo = true;
+                    }
+                }
+                if (!foundCombo) {
+                    const single = word[i];
+                    if (this.conversionTable[single]) {
+                        allVals.push(this.conversionTable[single]);
+                    }
+                    i++;
+                }
+            }
+        });
+        return allVals;
+    },
     calculateEnergies: function(name) {
         const phonVals = this.getPhoneticValues(name);
         if (!phonVals.length) return { error: "El nombre no es válido o está vacío." };
