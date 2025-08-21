@@ -225,7 +225,25 @@ const calculationEngine = {
     sumDigits: (num) => num.toString().split('').reduce((a, d) => a + +d, 0),
     reduceNumber: function(num) { if (num >= 1 && num <= 22) return num; let s = this.sumDigits(num); while (s > 22) s = this.sumDigits(s); return s; },
     reduceToSmallest: function(num) { let s = this.sumDigits(num); while (s > 9) s = this.sumDigits(s); return s; },
-    calculateAspectPair: function(numbers) { const arr = Array.isArray(numbers) ? numbers : [numbers]; if (!arr.length) return 'N/A'; const sum = arr.reduce((a, n) => a + n, 0); let left = this.reduceNumber(sum); let right = this.reduceToSmallest(left); if (left === 10) right = 1; if (left === 19) right = 1; if (left === 22) right = 4; return `${left}-${right}`; },
+    // The `numbers` argument can be a single number or an array of numbers. Without
+    // an explicit type annotation, TypeScript can infer `numbers` as `never[]` in
+    // some circumstances (e.g. when called with an empty array), which then
+    // propagates to `arr` and causes `reduce` to expect a callback for `never`.
+    // By declaring the parameter type and casting the resulting `arr` to
+    // `number[]`, we ensure `reduce` operates on a known numeric array and
+    // avoid TS2345 errors like “argument of type 'any' is not assignable to
+    // parameter of type 'never'”.
+    calculateAspectPair: function(numbers: number | number[]) {
+        const arr: number[] = Array.isArray(numbers) ? (numbers as number[]) : [numbers as number];
+        if (!arr.length) return 'N/A';
+        const sum = arr.reduce((a: number, n: number) => a + n, 0);
+        let left = this.reduceNumber(sum);
+        let right = this.reduceToSmallest(left);
+        if (left === 10) right = 1;
+        if (left === 19) right = 1;
+        if (left === 22) right = 4;
+        return `${left}-${right}`;
+    },
     getPhoneticValues: function(name) { const preNormalized = name.replace(/ñ/gi, (match) => match === 'ñ' ? '__LOWER_ENYE__' : '__UPPER_ENYE__'); const normalized = preNormalized.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); const restored = normalized.replace(/__LOWER_ENYE__/g, 'ñ').replace(/__UPPER_ENYE__/g, 'Ñ'); const words = restored.toUpperCase().split(/\s+/).filter(w => w.length > 0); const allVals = []; words.forEach((word) => { let i = 0; while (i < word.length) { let foundCombo = false; if (i + 1 < word.length) { const twoLetterCombo = word.substring(i, i + 2); if (this.conversionTable[twoLetterCombo]) { allVals.push(this.conversionTable[twoLetterCombo]); i += 2; foundCombo = true; } } if (!foundCombo) { if (this.conversionTable[word[i]]) { allVals.push(this.conversionTable[word[i]]); } i++; } } }); return allVals; },
     calculateEnergies: function(name) {
         const phonVals = this.getPhoneticValues(name);
@@ -248,7 +266,10 @@ const calculationEngine = {
             const allLefts = [pk, sk, pt, st, pg, sg].map(p => (p && p !== 'N/A') ? +p.split('-')[0] : 0);
             mision = this.calculateAspectPair(allLefts.reduce((a, n) => a + n, 0));
         }
-        const nameSum = phonVals.reduce((a, n) => a + n, 0);
+        // Cast phonVals as a numeric array to avoid inference of `never[]`. Without
+        // this cast, `phonVals.reduce` can produce TS2345 errors when TypeScript
+        // infers an empty array type.
+        const nameSum = (phonVals as number[]).reduce((a: number, n: number) => a + n, 0);
         const esencia = this.calculateAspectPair(nameSum * nameSum);
         return { "Misión": mision, "Esencia": esencia, "Karma I": pk, "Karma II": sk, "Talento I": pt, "Talento II": st, "Objetivo I": pg, "Objetivo II": sg };
     }
