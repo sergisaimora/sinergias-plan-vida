@@ -722,7 +722,7 @@ const AudioModal = ({ script, onClose, people, targetLanguage }) => {
                     method: 'POST',
                     // ...
                 }).then((res) => {
-  if (!res || !res.ok) {
+    if (!res || !res.ok) {
     throw new Error(`La llamada al asistente de voz falló: ${res?.statusText ?? 'Sin respuesta'}`);
   }
   return res.json();
