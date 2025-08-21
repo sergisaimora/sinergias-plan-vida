@@ -86,9 +86,11 @@ const getEnergyDescriptionsFromFirebase = async () => {
                     return null;
                 }
             } catch (error) {
-                // Si falla por estar offline, usamos el fallback
-                if (error.code === 'unavailable' || error.message.includes('offline')) {
-                    console.warn(`SDK falló para "${docName}" (${error.code}). Intentando con REST Fallback...`);
+                // TypeScript's catch parameter is `unknown`. Cast to `any` so we can access properties
+                // like `code` and `message`. Si falla por estar offline, usamos el fallback
+                const err = error as any;
+                if (err.code === 'unavailable' || err.message?.includes('offline')) {
+                    console.warn(`SDK falló para "${docName}" (${err.code}). Intentando con REST Fallback...`);
                     const docPath = `analisistextos/${docName}`;
                     // Llama a la función de fallback que añadiste en el Paso 1
                     const restData = await __fetchDocViaREST(app, firebaseConfig.projectId, FIRESTORE_DB_ID, docPath);
