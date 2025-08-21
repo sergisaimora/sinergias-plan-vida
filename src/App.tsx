@@ -721,11 +721,12 @@ const AudioModal = ({ script, onClose, people, targetLanguage }) => {
                 return fetchWithBackoff(APP_CONFIG.TTS_CLOUD_FUNCTION_URL, { // <-- CAMBIO AQUÍ
                     method: 'POST',
                     // ...
-                }).then(res => {
-                    // La lógica de reintento ya está hecha.
-                    if (!res.ok) throw new Error(`La llamada al asistente de voz falló: ${res.statusText}`);
-                    return res.json();
-                });
+                }).then((res) => {
+  if (!res || !res.ok) {
+    throw new Error(`La llamada al asistente de voz falló: ${res?.statusText ?? 'Sin respuesta'}`);
+  }
+  return res.json();
+});
             }));
             const audioBlobs = audioResponses.map(response => {
                 if (!response.audioContent) throw new Error("La respuesta del servidor no contiene audio.");
