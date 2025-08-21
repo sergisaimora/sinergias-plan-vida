@@ -838,7 +838,7 @@ const EnergyStarPreview = ({ energies, personName }) => {
 function App() {
     const initialPersonState = { nombre: '', phase: 'second' };
     const [people, setPeople] = useState([initialPersonState, initialPersonState]);
-    const [results, setResults] = useState([null, null]);
+    const [results, setResults] = useState<any[]>([null, null]);
     const [analysisData, setAnalysisData] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState('');
