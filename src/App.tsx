@@ -492,7 +492,11 @@ function calcularCompatibilidad(A, B, opts: any = {}) {
   const detail = Array.from(matches.values());
   detail.forEach(m => total += m.points);
 
-  const bonusesApplied = [];
+  // Track which bonus codes have been applied.  Without an explicit
+  // annotation TypeScript infers the type of an empty array as `never[]`,
+  // which disallows pushing strings into it (TS2345).  Annotate as
+  // string[] so we can push codes like 'B1', `B2_A`, etc.
+  const bonusesApplied: string[] = [];
   const has_TK = detail.some(m => m.rule === 'R4_T_to_K');
   const has_KK = detail.some(m => m.rule === 'R8a_K_same_stage' || m.rule === 'R8b_K_cross_stage');
   if (has_TK && !has_KK) {
