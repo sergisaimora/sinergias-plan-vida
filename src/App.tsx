@@ -145,8 +145,13 @@ const getEnergyDescriptionsFromFirebase = async () => {
         return descriptions;
 
     } catch (error) {
+        // TypeScript infiere el tipo de `error` como `unknown` en los bloques catch.
+        // Para poder acceder a propiedades del objeto de error (como `message`), lo
+        // convertimos primero a `any`. Esto evita el error TS18046 y nos permite
+        // registrar y gestionar correctamente el error.
+        const err = error as any;
         // Este bloque ahora solo se ejecutará si el fallback también falla
-        console.error("Error crítico y final al cargar descripciones:", error);
+        console.error("Error crítico y final al cargar descripciones:", err);
         return {
             karmaDescriptions: {}, talentDescriptions: {},
             missionDescriptions: {}, goalDescriptions: {}
@@ -489,15 +494,26 @@ async function fetchWithBackoff(url, options = {}, retries = 3, initialDelay = 1
         } catch (error) {
             clearTimeout(id); // Limpia el timeout también si hay un error
 
+            // TypeScript considera que el parámetro `error` del catch es de tipo
+            // `unknown` (TS18046), lo que impide acceder a propiedades como
+            // `name` o registrarlo correctamente. Lo convertimos a `any` para
+            // que el compilador permita su manipulación.
+            const err = error as any;
             // Si el error es por un AbortController o un fallo de red, y no es el último intento
             if (i < retries - 1) {
-                console.warn(`Intento ${i + 1}/${retries} falló por error de red o timeout. Reintentando en ${delay}ms...`, error.name);
+                console.warn(
+                    `Intento ${i + 1}/${retries} falló por error de red o timeout. Reintentando en ${delay}ms...`,
+                    err.name
+                );
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
             } else {
                 // Si es el último intento, lanzamos el error para que sea gestionado más arriba.
-                console.error(`Todos los ${retries} intentos fallaron. Error final:`, error);
-                throw error; // Lanza el error original (puede ser un objeto Response o un Error)
+                console.error(
+                    `Todos los ${retries} intentos fallaron. Error final:`,
+                    err
+                );
+                throw err; // Lanza el error original (convertido a any)
             }
         }
     }
