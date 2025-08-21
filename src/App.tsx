@@ -179,10 +179,18 @@ const FIRESTORE_DB_ID = 'analisistextos';
 // Función de inicialización de Firestore para evitar errores si se llama múltiples veces.
 function getDb(app, databaseId) {
   try {
-    return initializeFirestore(app, {
-      experimentalForceLongPolling: true,
-      useFetchStreams: false,
-    }, databaseId);
+    // Configuración de Firestore. La opción `useFetchStreams` ya no existe en
+    // las versiones recientes del SDK, por lo que solo establecemos
+    // `experimentalForceLongPolling` para evitar advertencias en entornos
+    // con restricciones de red (por ejemplo, localhost). Eliminamos
+    // `useFetchStreams` para que el objeto cumpla con `FirestoreSettings`.
+    return initializeFirestore(
+      app,
+      {
+        experimentalForceLongPolling: true,
+      },
+      databaseId
+    );
   } catch (e) {
     return getFirestore(app, databaseId);
   }
