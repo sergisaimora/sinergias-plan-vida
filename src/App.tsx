@@ -947,11 +947,12 @@ function App() {
                     vfsFontsScript.onerror = reject;
                 });
                 
-                if (window.pdfMake && window.pdfMake.vfs) {
-                    setIsPdfMakeReady(true);
-                } else {
-                    throw new Error("pdfmake or vfs_fonts did not load correctly.");
-                }
+                if ((window as any).pdfMake && (window as any).pdfMake.vfs) {
+  setIsPdfMakeReady(true);
+} else {
+  throw new Error("pdfmake or vfs_fonts did not load correctly.");
+}
+
             } catch (err) {
                 console.error("Error loading pdfmake scripts:", err);
                 setError("Error al cargar la librería para PDF. Por favor, refresca la página.");
