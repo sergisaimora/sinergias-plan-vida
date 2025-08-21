@@ -251,20 +251,39 @@ const calculationEngine = {
         const isShortName = phonVals.length < 10;
         let pk, sk, pt, st, pg, sg, mision;
         if (isShortName) {
-            let aspects = { challenges: [], talents: [], goals: [] };
-            phonVals.forEach((v, i) => aspects[Object.keys(aspects)[i % 3]].push(v));
-            pk = this.calculateAspectPair(aspects.challenges); sk = pk;
-            pt = this.calculateAspectPair(aspects.talents); st = pt;
-            pg = this.calculateAspectPair(aspects.goals); sg = pg;
-            mision = this.calculateAspectPair(phonVals.reduce((a, b) => a + b, 0));
+            // Define aspects with an explicit record type so that TypeScript knows each value is a number array.
+            const aspects: { [key: string]: number[] } = { challenges: [], talents: [], goals: [] };
+            // Distribute phonetic values across challenges, talents and goals. Casting the key helps avoid
+            // inference of `never[]` on the array when pushing values.
+            phonVals.forEach((v: number, i: number) => {
+                const keys = Object.keys(aspects);
+                const key = keys[i % keys.length];
+                aspects[key].push(v);
+            });
+            pk = this.calculateAspectPair(aspects.challenges);
+            sk = pk;
+            pt = this.calculateAspectPair(aspects.talents);
+            st = pt;
+            pg = this.calculateAspectPair(aspects.goals);
+            sg = pg;
+            // Sum all phonetic values for mission when the name is short
+            mision = this.calculateAspectPair(phonVals.reduce((a: number, b: number) => a + b, 0));
         } else {
-            let aspects = { pk: [], sk: [], pt: [], st: [], pg: [], sg: [] };
-            phonVals.forEach((v, i) => aspects[Object.keys(aspects)[i % 6]].push(v));
-            pk = this.calculateAspectPair(aspects.pk); sk = this.calculateAspectPair(aspects.sk);
-            pt = this.calculateAspectPair(aspects.pt); st = this.calculateAspectPair(aspects.st);
-            pg = this.calculateAspectPair(aspects.pg); sg = this.calculateAspectPair(aspects.sg);
+            // When the name is longer, distribute phonetic values across six aspect arrays.
+            const aspects: { [key: string]: number[] } = { pk: [], sk: [], pt: [], st: [], pg: [], sg: [] };
+            phonVals.forEach((v: number, i: number) => {
+                const keys = Object.keys(aspects);
+                const key = keys[i % keys.length];
+                aspects[key].push(v);
+            });
+            pk = this.calculateAspectPair(aspects.pk);
+            sk = this.calculateAspectPair(aspects.sk);
+            pt = this.calculateAspectPair(aspects.pt);
+            st = this.calculateAspectPair(aspects.st);
+            pg = this.calculateAspectPair(aspects.pg);
+            sg = this.calculateAspectPair(aspects.sg);
             const allLefts = [pk, sk, pt, st, pg, sg].map(p => (p && p !== 'N/A') ? +p.split('-')[0] : 0);
-            mision = this.calculateAspectPair(allLefts.reduce((a, n) => a + n, 0));
+            mision = this.calculateAspectPair(allLefts.reduce((a: number, n: number) => a + n, 0));
         }
         // Cast phonVals as a numeric array to avoid inference of `never[]`. Without
         // this cast, `phonVals.reduce` can produce TS2345 errors when TypeScript
