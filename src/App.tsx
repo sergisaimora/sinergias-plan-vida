@@ -746,12 +746,14 @@ const AudioModal = ({ script, onClose, people, targetLanguage }) => {
             document.body.removeChild(a);
             setDownloadState('success');
         } catch (err) {
-            console.error('Error al generar el audio:', err);
-            setError(`Error: ${err.message}`);
-            setDownloadState('error');
-        } finally {
-            setTimeout(() => setDownloadState('idle'), 3000);
-        }
+  const error = err as any;  // Cast a 'any' para evitar TS18046
+  console.error('Error al generar el audio:', error);
+  setError(`Error: ${error.message}`);
+  setDownloadState('error');
+} finally {
+  setTimeout(() => setDownloadState('idle'), 3000);
+}
+
     };
 
     const getButtonContent = () => {
