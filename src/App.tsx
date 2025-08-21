@@ -702,7 +702,7 @@ const AudioModal = ({ script, onClose, people, targetLanguage }) => {
         setDownloadState('loading');
         setError('');
         const MAX_LENGTH = 4500;
-        const chunks = [];
+        const chunks: string[] = [];
         let currentChunk = "";
         const sentences = script.split(/(?<=[.!?])\s+/);
         for (const sentence of sentences) {
