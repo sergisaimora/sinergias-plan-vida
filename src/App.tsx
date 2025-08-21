@@ -11,7 +11,8 @@ async function __fetchDocViaREST(app, projectId, databaseId, docPath) {
     if (!auth.currentUser) {
         await signInAnonymously(auth);
     }
-    const token = await auth.currentUser.getIdToken(true);
+    // Use non-null assertion on auth.currentUser to satisfy TypeScript's strict null checks.
+    const token = await auth.currentUser!.getIdToken(true);
     const dbSegment = encodeURIComponent(databaseId || '(default)');
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${dbSegment}/documents/${docPath}`;
     
