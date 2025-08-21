@@ -57,8 +57,10 @@ function __fromFirestoreREST(fields) {
 // --- FUNCIÓN PARA CARGAR DESCRIPCIONES DESDE FIREBASE (VERSIÓN MEJORADA) ---
 const getEnergyDescriptionsFromFirebase = async () => {
     // Caché para no recargar los datos en cada renderizado.
-    if (getEnergyDescriptionsFromFirebase.cache) {
-        return getEnergyDescriptionsFromFirebase.cache;
+    // Use a property on the function to store a cache. Cast to any to avoid TS complaining.
+    const fnAny = getEnergyDescriptionsFromFirebase as any;
+    if (fnAny.cache) {
+        return fnAny.cache;
     }
 
     try {
@@ -136,7 +138,8 @@ const getEnergyDescriptionsFromFirebase = async () => {
         };
 
         // Guarda en caché el resultado para futuras llamadas.
-        getEnergyDescriptionsFromFirebase.cache = descriptions;
+        // Store in cache on the function (cast to any to avoid TS error)
+        (getEnergyDescriptionsFromFirebase as any).cache = descriptions;
         return descriptions;
 
     } catch (error) {
