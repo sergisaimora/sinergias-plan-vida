@@ -848,7 +848,7 @@ function App() {
     const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
     const [audioScript, setAudioScript] = useState('');
     const [targetLanguage, setTargetLanguage] = useState('Español (original)');
-    const [energyDescriptions, setEnergyDescriptions] = useState(null);
+   const [energyDescriptions, setEnergyDescriptions] = useState<any>(null);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [dataError, setDataError] = useState('');
     const [isAuthReady, setIsAuthReady] = useState(false);
