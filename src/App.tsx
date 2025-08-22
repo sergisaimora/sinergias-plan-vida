@@ -106,7 +106,8 @@ const getEnergyDescriptionsFromFirebase = async () => {
             }
         };
 
-        // Realiza todas las lecturas en paralelo
+        
+      // Realiza todas las lecturas en paralelo
         const [karma, talentos, mision, objetivos] = await Promise.all([
             readDoc('karma'),
             readDoc('talentos'),
