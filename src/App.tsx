@@ -823,7 +823,7 @@ function App() {
     // --- useEffect PARA INICIALIZAR FIREBASE Y AUTENTICAR ---
     useEffect(() => {
         try {
-            const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+            const { default: app } = await import("./firebase");
             const auth = getAuth(app);
 
             const unsubscribe = onAuthStateChanged(auth, (user) => {
