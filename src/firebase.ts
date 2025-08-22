@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -13,13 +12,9 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-// Inicializar Firebase
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Exportar servicios
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-export { getApps, getApp, initializeApp };
-export { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
 export default app;
