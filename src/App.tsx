@@ -1,6 +1,9 @@
 import { auth, db, storage } from "./firebase";
-
+import { getApps, getApp, initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import { getFirestore, doc, getDoc, initializeFirestore, enableNetwork } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
 
 
 async function __fetchDocViaREST(app, projectId, databaseId, docPath) {
