@@ -71,7 +71,7 @@ const getEnergyDescriptionsFromFirebase = async () => {
             throw new Error("Se intentó leer datos sin un usuario autenticado.");
         }
 
-        const db = getDb(app, FIRESTORE_DB_ID); // Using your existing getDb function
+        const db = getFirestore(app); // Using your existing getDb function
 
         // Función auxiliar mejorada para leer un documento
         const readDoc = async (docName) => {
@@ -162,42 +162,10 @@ const getEnergyDescriptionsFromFirebase = async () => {
 
 // --- CONFIGURACIÓN DE FIREBASE ---
 // Se utiliza la configuración proporcionada por el entorno para mayor seguridad y flexibilidad.
-const firebaseConfig = {
-  // Lee valores de Firebase desde variables de entorno cuando estén disponibles. Si no se
-  // proporcionan, usa los valores por defecto definidos en el código. Esto permite que las claves
-  // sensibles se almacenen en la configuración de Vercel en lugar de exponerse en el bundle.
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyDFrswKemxaK5KGt6PMb-3aRsJQgJ_Orlk",
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "gold-subset-467605-u7.firebaseapp.com",
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "gold-subset-467605-u7",
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "gold-subset-467605-u7.appspot.com",
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "898264190170",
-  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:898264190170:web:0e21a959bc8609658029e3",
-  measurementId: "G-PQLYSLK3TB"
-    };
 
 const FIRESTORE_DB_ID = 'analisistextos';
 
 // Función de inicialización de Firestore para evitar errores si se llama múltiples veces.
-function getDb(app, databaseId) {
-  try {
-    // Configuración de Firestore. La opción `useFetchStreams` ya no existe en
-    // las versiones recientes del SDK, por lo que solo establecemos
-    // `experimentalForceLongPolling` para evitar advertencias en entornos
-    // con restricciones de red (por ejemplo, localhost). Eliminamos
-    // `useFetchStreams` para que el objeto cumpla con `FirestoreSettings`.
-    return initializeFirestore(
-      app,
-      {
-        experimentalForceLongPolling: true,
-      },
-      databaseId
-    );
-  } catch (e) {
-    return getFirestore(app, databaseId);
-  }
-}
-
-
 
 // --- CONSTANTES GLOBALES Y CONFIGURACIÓN ---
 const APP_CONFIG = {
