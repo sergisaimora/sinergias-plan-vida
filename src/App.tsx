@@ -1,8 +1,4 @@
-// @ts-nocheck
- import React, { useState, useEffect, useRef } from 'react';
-// @ts-nocheck
-// @ts-nocheck
-// @ts-nocheck
+import { auth, db, storage } from "./firebase";
 
 import { getFirestore, doc, getDoc, initializeFirestore, enableNetwork } from 'firebase/firestore';
 
