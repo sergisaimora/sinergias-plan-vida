@@ -32,6 +32,7 @@ async function __fetchDocViaREST(app, projectId, databaseId, docPath) {
   }
 }
 
+
 function __fromFirestoreREST(fields) {
   const parseValue = (v) => {
     if (v === null || v === undefined) return null;
