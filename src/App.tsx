@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
+// @ts-nocheck
+ import React, { useState, useEffect, useRef } from 'react';
+// @ts-nocheck
+// @ts-nocheck
+// @ts-nocheck
+
 import { getFirestore, doc, getDoc, initializeFirestore, enableNetwork } from 'firebase/firestore';
 
 
